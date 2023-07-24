@@ -6,7 +6,8 @@ import json
 from models import *
 
 
-def get_data():
+def get_data(input: InputParameters):
+    print(input)
     url = "https://data.rcsb.org/rest/v1/core/interface/1RH7/1/1/"
     response = requests.get(url)
     return json.loads(response.content.decode('utf-8'))
@@ -34,8 +35,8 @@ def calculate(ip_info_objs):
     return table_data_objs
 
 
-def calculate_asa_change():
-    response = get_data()
+def calculate_asa_change(input: InputParameters):
+    response = get_data(input)
     ip_info_objs = list()
     interface_partners = response["rcsb_interface_partner"]
     for ip in interface_partners:

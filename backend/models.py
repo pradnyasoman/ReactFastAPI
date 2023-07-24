@@ -4,6 +4,12 @@ import json
 from pydantic import BaseModel
 
 
+class InputParameters(BaseModel):
+    entity_id: str = ""
+    assembly_id: str = ""
+    interface_id: str = ""
+
+
 class IPInfo(BaseModel):
     entity_id: str = ""
     asym_id: str = ""
