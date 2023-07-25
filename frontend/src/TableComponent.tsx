@@ -1,34 +1,35 @@
 import * as React from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  styled,
+  AppBar,
+  Toolbar,
+  Button,
+  IconButton,
+  Box,
+} from "@mui/material";
 import { TableVirtuoso, TableComponents } from "react-virtuoso";
-import { styled } from "@mui/material/styles";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import { AppContext } from "./AppContext";
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-of-type(odd)": {
-    backgroundColor: "#D3D3D3",
-  },
-  // hide last border
-  "&:last-child td, &:last-child th": {
-    border: 0,
-  },
-}));
-
+/**
+ * Interfaces to define data structure.
+ * @interface
+ */
 interface InterfacePartnerIdentifier {
   entity_id: string;
   asym_id: string;
 }
-
 interface PartnerData {
   interface_partner_identifier: InterfacePartnerIdentifier;
   table_data: number[][];
 }
-
 interface ColumnData {
   dataKey: number;
   label: string;
@@ -36,6 +37,18 @@ interface ColumnData {
   width: number;
 }
 
+/**
+ * Defining and styling table elements
+ * @const
+ */
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: "#D3D3D3",
+  },
+  "&:last-child td, &:last-child th": {
+    border: 0,
+  },
+}));
 const columns: ColumnData[] = [
   {
     width: 50,
@@ -61,7 +74,6 @@ const columns: ColumnData[] = [
     float: true,
   },
 ];
-
 const VirtuosoTableComponents: TableComponents<number[]> = {
   Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
     <TableContainer component={Paper} {...props} ref={ref} />
@@ -79,6 +91,10 @@ const VirtuosoTableComponents: TableComponents<number[]> = {
   )),
 };
 
+/**
+ * Function to define Table row.
+ * @function
+ */
 function fixedHeaderContent() {
   return (
     <TableRow>
@@ -101,6 +117,10 @@ function fixedHeaderContent() {
   );
 }
 
+/**
+ * Function to define Row content.
+ * @function
+ */
 function rowContent(_index: number, row: number[]) {
   return (
     <React.Fragment>
@@ -119,12 +139,65 @@ function rowContent(_index: number, row: number[]) {
   );
 }
 
+/**
+ * Table component to disply ASA change data.
+ * @component
+ */
 export default function TableComponent({ data }: { data: PartnerData[] }) {
-  console.log("THE DATA THAT CAME *****************");
-  console.log(data.length);
-  let size: number = data.length;
+  const context = React.useContext(AppContext);
+
+  if (!context) {
+    throw new Error("AppContext not available");
+  }
+
+  const { setCurrentPage } = context;
+  const { setData } = context;
+  function goBack() {
+    setCurrentPage("form");
+  }
+
+  function loadGraph() {
+    setData(data);
+    setCurrentPage("graphs");
+  }
+
   return (
     <div>
+      <AppBar position="static" style={{ backgroundColor: "#8ed1fc" }}>
+        <Toolbar>
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="back"
+            onClick={goBack}
+            style={{
+              color: "black",
+              fontFamily: "Arial",
+              fontSize: "25px",
+              fontWeight: "bold",
+            }}
+          >
+            <ArrowBackIosIcon />
+            <Box component="span" marginLeft={1}>
+              Back
+            </Box>
+          </IconButton>
+          <Box style={{ flexGrow: 1 }} /> {}
+          <Button
+            color="inherit"
+            onClick={loadGraph}
+            style={{
+              color: "black",
+              fontFamily: "Arial",
+              fontSize: "25px",
+              fontWeight: "bold",
+            }}
+          >
+            Graphs
+          </Button>
+        </Toolbar>
+      </AppBar>
+
       <div className="container is-max-desktop ">
         <section className="section is-small has-">
           <h1 className="title is-1 has-text-centered has-text-white ">
@@ -137,10 +210,11 @@ export default function TableComponent({ data }: { data: PartnerData[] }) {
       </div>
 
       {data.map((item, index) => (
-        <section className="section is-small ">
+        <section className="section is-small " key={index}>
           <center>
             <h2 className=" title is-3 has-text-centered has-text-white ">
-              Entity ID: {item.interface_partner_identifier.entity_id}, Asym ID:{" "}
+              Interface Partner --- Entity ID:{" "}
+              {item.interface_partner_identifier.entity_id}, Asym ID:{" "}
               {item.interface_partner_identifier.asym_id}
             </h2>
             <Paper style={{ height: 400, width: "90%" }}>

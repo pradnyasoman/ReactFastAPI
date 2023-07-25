@@ -1,37 +1,53 @@
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useState, useContext } from "react";
+import { AppContext } from "./AppContext";
 
-type FormProps = {
-  setView: React.Dispatch<React.SetStateAction<string>>;
-  setData: React.Dispatch<React.SetStateAction<any>>;
-};
-
-function Form({ setView, setData }: FormProps) {
+/**
+ * Form component to take input parameters and send POST request.
+ * @component
+ */
+function Form() {
   const [entryId, setEntryId] = useState("");
   const [assemblyId, setAssemblyId] = useState("");
   const [interfaceId, setInterfaceId] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const context = useContext(AppContext);
 
+  if (!context) {
+    throw new Error("AppContext not available");
+  }
+
+  const { setCurrentPage, setData } = context;
   const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault(); // Prevents page refresh
+    event.preventDefault();
 
     const data = {
       entry_id: entryId,
       assembly_id: assemblyId,
       interface_id: interfaceId,
     };
-    // console.log(JSON.stringify(data));
-    const response = await fetch("http://localhost:8000/asa-change", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
 
-    const responseData = await response.json();
-    console.log(responseData);
+    try {
+      const response = await fetch("http://localhost:8000/asa-change", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-    setData(responseData); // set the data in App state
-    setView("table"); // navigate to the table view
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+      const responseData = await response.json();
+
+      setData(responseData);
+      setCurrentPage("table");
+    } catch (error) {
+      setErrorMessage(
+        "Improper input. Please correct your input values and try again."
+      );
+      console.error(error);
+    }
   };
 
   return (
@@ -52,6 +68,7 @@ function Form({ setView, setData }: FormProps) {
               className="input is-large"
               type="text"
               name="name"
+              placeholder="example: 1RH7"
             />
           </div>
         </div>
@@ -65,6 +82,7 @@ function Form({ setView, setData }: FormProps) {
               className="input is-large"
               type="text"
               name="name"
+              placeholder="example: 1"
             />
           </div>
         </div>
@@ -78,10 +96,16 @@ function Form({ setView, setData }: FormProps) {
               className="input is-large"
               type="text"
               name="name"
+              placeholder="example: 3"
             />
           </div>
         </div>
 
+        {errorMessage && (
+          <div className="notification is-danger has-text-centered">
+            {errorMessage}
+          </div>
+        )}
         <div className="field has-text-centered">
           <div className="control">
             <button className="button is-link is-large is-danger">
