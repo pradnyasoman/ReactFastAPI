@@ -1,6 +1,11 @@
 import React, { FormEvent, useState } from "react";
 
-function Form() {
+type FormProps = {
+  setView: React.Dispatch<React.SetStateAction<string>>;
+  setData: React.Dispatch<React.SetStateAction<any>>;
+};
+
+function Form({ setView, setData }: FormProps) {
   const [entryId, setEntryId] = useState("");
   const [assemblyId, setAssemblyId] = useState("");
   const [interfaceId, setInterfaceId] = useState("");
@@ -13,7 +18,7 @@ function Form() {
       assembly_id: assemblyId,
       interface_id: interfaceId,
     };
-    console.log(data);
+    // console.log(JSON.stringify(data));
     const response = await fetch("http://localhost:8000/asa-change", {
       method: "POST",
       headers: {
@@ -24,13 +29,16 @@ function Form() {
 
     const responseData = await response.json();
     console.log(responseData);
+
+    setData(responseData); // set the data in App state
+    setView("table"); // navigate to the table view
   };
 
   return (
     <div className="container is-max-desktop ">
       <section className="section is-medium">
         <h1 className="title is-1 has-text-centered has-text-white ">
-          ASA Change Info
+          Enter Protein Information to check ASA change
         </h1>
       </section>
 
