@@ -21,7 +21,7 @@ The back-end of the application is built with FastAPI and includes an endpoint t
 - Bound ASA (float).
 - Change in ASA upon interaction (float).
 
-The front-end displays the data in tabular format as well as graphical representation.
+The front-end displays the data in tabular format as well as in a graphical format.
 
 ## How to Run the Application
 
@@ -33,7 +33,7 @@ cd <project directory>
 cd backend
 ```
 
-3. Set up and activate a virtual environment for the backend (optional but recommended) Following is for Unix or MacOS. Then install required backend dependencies.
+3. Set up and activate a virtual environment for the backend (optional but recommended). Following are steps to set up virtual environment for Unix or MacOS. Then install required backend dependencies.
 
 ```
 python -m venv /path/venv_name
@@ -41,7 +41,7 @@ source venv_name/bin/activate
 pip install -r requirements.txt
 ```
 
-4. Create new terminal. Navigate to project directory and then `frontend` folder. Install fronent dependencies.
+4. Create new terminal. Navigate to project directory and then `frontend` folder. Install frontend dependencies.
 
 ```
 cd <project directory>
@@ -55,7 +55,7 @@ npm install
 uvicorn main:app --reload
 ```
 
-6.  Run the fronent server in frontend terminal using :
+6.  Run the frontend server in frontend terminal using :
 
 ```
 npm run dev
